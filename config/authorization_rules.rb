@@ -101,7 +101,11 @@ authorization do
       to :manage
       if_attribute id: is { user.id }
     end
-    has_permission_on :user_profiles, to: :view
+    has_permission_on :user, join_by: :or do
+      to :view_profile
+      if_attribute prefs: {profile_visibility: 'public'}
+      if_attribute groups: contains { user.groups }
+    end
   end
 
   role :guest do
